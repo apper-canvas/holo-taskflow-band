@@ -1,13 +1,15 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { taskService, categoryService } from '../services';
-import TaskHeader from './TaskHeader';
-import CategorySidebar from './CategorySidebar';
-import TaskList from './TaskList';
-import TaskModal from './TaskModal';
+import { taskService, categoryService } from '@/services';
+import TaskHeader from '@/components/organisms/TaskHeader';
+import CategorySidebar from '@/components/organisms/CategorySidebar';
+import TaskList from '@/components/organisms/TaskList';
+import TaskModal from '@/components/organisms/TaskModal';
+import ConfettiAnimation from '@/components/molecules/ConfettiAnimation';
+import LoadingSpinner from '@/components/molecules/LoadingSpinner';
+import ErrorMessage from '@/components/molecules/ErrorMessage';
 
-function MainFeature() {
+function HomePage() {
   const [tasks, setTasks] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -18,6 +20,7 @@ function MainFeature() {
   const [showCompleted, setShowCompleted] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
+  const [confettiPositions, setConfettiPositions] = useState([]);
 
   const loadData = async () => {
     setLoading(true);
@@ -76,6 +79,16 @@ function MainFeature() {
       setTasks(prev => prev.map(t => t.id === id ? updatedTask : t));
       
       if (!task.completed) {
+        // Trigger confetti animation
+        const positions = Array.from({ length: 12 }, (_, i) => ({
+          id: Date.now() + i,
+          x: Math.random() * 100,
+          y: Math.random() * 100,
+          delay: i * 0.1
+        }));
+        setConfettiPositions(positions);
+        
+        setTimeout(() => setConfettiPositions([]), 1000);
         toast.success('Task completed! 🎉');
       } else {
         toast.info('Task marked as incomplete');
@@ -95,6 +108,18 @@ function MainFeature() {
     }
   };
 
+  const handleQuickAdd = (title) => {
+    if (title.trim()) {
+      handleCreateTask({
+        title: title.trim(),
+        description: '',
+        priority: 'medium',
+        category: selectedCategory === 'all' ? categories[0]?.name || 'General' : selectedCategory,
+        dueDate: null
+      });
+    }
+  };
+
   const filteredTasks = tasks.filter(task => {
     if (task.archived) return false;
     if (!showCompleted && task.completed) return false;
@@ -110,47 +135,17 @@ function MainFeature() {
   const completionPercentage = totalTasksCount > 0 ? Math.round((completedTasksCount / totalTasksCount) * 100) : 0;
 
   if (loading) {
-    return (
-      <div className="h-screen flex">
-        <div className="w-64 bg-surface border-r border-gray-200 p-6">
-          <div className="animate-pulse space-y-4">
-            <div className="h-6 bg-gray-200 rounded w-3/4"></div>
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-4 bg-gray-200 rounded"></div>
-            ))}
-          </div>
-        </div>
-        <div className="flex-1 p-6">
-          <div className="animate-pulse space-y-6">
-            <div className="h-16 bg-gray-200 rounded-lg"></div>
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-20 bg-gray-200 rounded-lg"></div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (error) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Something went wrong</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <button
-            onClick={loadData}
-            className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
+    return <ErrorMessage message={error} onRetry={loadData} />;
   }
 
   return (
     <div className="h-screen flex overflow-hidden max-w-full">
+      <ConfettiAnimation positions={confettiPositions} />
+
       <CategorySidebar
         categories={categories}
         selectedCategory={selectedCategory}
@@ -166,7 +161,7 @@ function MainFeature() {
         <TaskHeader
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
-          onQuickAdd={handleCreateTask}
+          onQuickAdd={handleQuickAdd}
           onAddTask={() => {
             setEditingTask(null);
             setShowModal(true);
@@ -186,6 +181,10 @@ function MainFeature() {
             }}
             onDelete={handleDeleteTask}
             categories={categories}
+            onAddTask={() => {
+                setEditingTask(null);
+                setShowModal(true);
+              }}
           />
         </div>
       </div>
@@ -208,4 +207,4 @@ function MainFeature() {
   );
 }
 
-export default MainFeature;
+export default HomePage;
