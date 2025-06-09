@@ -1,0 +1,62 @@
+[
+  {
+    "id": "1",
+    "title": "Review quarterly budget report",
+    "description": "Analyze Q3 financial performance and prepare recommendations for Q4 budget adjustments",
+    "priority": "high",
+    "category": "Work",
+    "dueDate": 1704067200000,
+    "completed": false,
+    "archived": false,
+    "createdAt": 1703894400000,
+    "completedAt": null
+  },
+  {
+    "id": "2",
+    "title": "Complete React component refactoring",
+    "description": "Update legacy components to use modern hooks pattern and improve performance",
+    "priority": "medium",
+    "category": "Development",
+    "dueDate": 1704153600000,
+    "completed": true,
+    "archived": false,
+    "createdAt": 1703808000000,
+    "completedAt": 1703980800000
+  },
+  {
+    "id": "3",
+    "title": "Plan weekend hiking trip",
+    "description": "Research trails, check weather, pack gear, and coordinate with friends",
+    "priority": "low",
+    "category": "Personal",
+    "dueDate": 1704326400000,
+    "completed": false,
+    "archived": false,
+    "createdAt": 1703721600000,
+    "completedAt": null
+  },
+  {
+    "id": "4",
+    "title": "Doctor appointment scheduling",
+    "description": "Call primary care physician to schedule annual physical exam",
+    "priority": "medium",
+    "category": "Health",
+    "dueDate": 1704240000000,
+    "completed": false,
+    "archived": false,
+    "createdAt": 1703635200000,
+    "completedAt": null
+  },
+  {
+    "id": "5",
+    "title": "Update portfolio website",
+    "description": "Add recent projects, optimize images, and improve mobile responsiveness",
+    "priority": "high",
+    "category": "Development",
+    "dueDate": null,
+    "completed": false,
+    "archived": false,
+    "createdAt": 1703548800000,
+    "completedAt": null
+  }
+]
